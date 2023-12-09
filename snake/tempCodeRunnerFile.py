@@ -19,7 +19,7 @@ pygame.display.set_caption('Snake Game by Kozhomberdiev Kalys EEAIR-23')
 clock = pygame.time.Clock()
  
 snake_block = 10
-snake_speed = 10
+snake_speed = 15
  
 font_style = pygame.font.SysFont("bahnschrift", 25)
 score_font = pygame.font.SysFont("comicsansms", 35)

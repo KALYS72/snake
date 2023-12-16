@@ -32,11 +32,35 @@ class SNAKE:
             block_rect = pg.Rect(x_pos,y_pos,cell_size,cell_size)
             pg.draw.rect(screen, (255, 192, 192), block_rect)
 
+    def reverse(self, direction, coordinate):                # this part of the code was not in the video
+        body_copy = self.body[:-1]                            # I wrote it by myself
+        if direction == "y" and coordinate == -1:
+            body_copy.insert(0,body_copy[0] + Vector2(0,cell_number))
+        if direction == "y" and coordinate == 1:
+            body_copy.insert(0,body_copy[0] + Vector2(0,-cell_number))
+        if direction == "x" and coordinate == -1:
+            body_copy.insert(0,body_copy[0] + Vector2(cell_number,0))
+        if direction == "x" and coordinate == 1:
+            body_copy.insert(0,body_copy[0] + Vector2(-cell_number,0))
+        self.body = body_copy[:]
+
     def move_snake(self):
         if not self.new_block:
-            body_copy = self.body[:-1]           # copiyng each element up to the last
-            body_copy.insert(0,body_copy[0] + self.direction)   # adding a position(x,y) on top of the head
-            self.body = body_copy[:]            # recording new body to the main one
+            head = self.body[0]
+            x = self.direction.x
+            y = self.direction.y
+            if y == -1 and head.y == 0:
+                self.reverse('y', -1)
+            if y == 1 and head.y == cell_number:
+                self.reverse('y', 1)
+            if x == -1 and head.x == 0:
+                self.reverse('x', -1)
+            if x == 1 and head.x == cell_number:
+                self.reverse('x', 1)
+            else:
+                body_copy = self.body[:-1]           # copiyng each element up to the last
+                body_copy.insert(0,body_copy[0] + self.direction)   # adding a position(x,y) on top of the head
+                self.body = body_copy[:]            # recording new body to the main one
         else:
             body_copy = self.body[:]           # instead of getting all elements except for the last one like we do in other case, we are getting an entire body instead
             body_copy.insert(0,body_copy[0] + self.direction)    # or in other words we are just getting an entire body and it grows 1 block
@@ -66,8 +90,8 @@ class MAIN:
             self.snake.add_tail()       # growing a block
 
     def check_lose(self):
-        if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:  # border check
-            self.game_over()
+        # if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:  # border check
+        #     self.game_over()
         for block in self.snake.body[1:]:        # checking each part of the body except for the head
             if block == self.snake.body[0]:      # if head touches any body part
                 self.game_over()
@@ -83,7 +107,7 @@ cell_number = 20
 screen = pg.display.set_mode((cell_size * cell_number, cell_size * cell_number))   # creating a screen
 clock = pg.time.Clock()                    # setting up an FPS counter
 apple = pg.image.load('assets/apple.jpg').convert_alpha()    # importing an image
-apple2 = pg.transform.scale(apple, (cell_size, cell_size))                       # resizing it bcs it is huge
+apple2 = pg.transform.scale(apple, (cell_size, cell_size))   # resizing it bcs it is huge
 
 main_game = MAIN()
 
@@ -113,4 +137,5 @@ while True:
     screen.fill((144, 238, 144))                 # painting the display (by RGB standart)
     main_game.draw_elements()
     pg.display.update()                    # just updating the display after the changes
-    clock.tick(60)                         # ticks 60 times per second
+    clock.tick(30)                         # ticks per 30 milliseconds
+                                           # reason why i changed it because when you wanted to immediatly press 2 buttons then it would crush 
